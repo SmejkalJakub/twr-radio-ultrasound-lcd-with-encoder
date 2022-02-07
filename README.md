@@ -1,45 +1,9 @@
-<a href="https://www.hardwario.com/"><img src="https://www.hardwario.com/ci/assets/hw-logo.svg" width="200" alt="HARDWARIO Logo" align="right"></a>
+# Project NAV - Ultrasound distance meter with variable alarm distance
 
-# LoRa Low-power Thermometer with 1-Wire DS18B20 temperature sensors
-
-[![Travis](https://img.shields.io/travis/hardwario/bcf-lora-1wire-thermometer/master.svg)](https://travis-ci.org/hardwario/bcf-lora-1wire-thermometer)
-[![Release](https://img.shields.io/github/release/hardwario/bcf-lora-1wire-thermometer.svg)](https://github.com/hardwario/bcf-lora-1wire-thermometer/releases)
-[![License](https://img.shields.io/github/license/hardwario/bcf-lora-1wire-thermometer.svg)](https://github.com/hardwario/bcf-lora-1wire-thermometer/blob/master/LICENSE)
-[![Twitter](https://img.shields.io/twitter/follow/hardwario_en.svg?style=social&label=Follow)](https://twitter.com/hardwario_en)
-
-If you want to get more information about Core Module, firmware and how to work with it, please follow this link:
-
-**https://developers.hardwario.com/firmware/basic-overview/**
-
-
-## SENSOR MODULE CONNECTION
-
-
-### Sensor Module R1.1 - 5 pin connector
-| A | GND | VCC | GND/C | B |
-|---|-----|-----|-------|---| 
-| - | GND | VCC |   -   | DATA |
-
-
-### Sensor Module R1.0 - 4 pin connector
-
-| A   | GND | GND | B    |
-|-----|-----|-----|------| 
-| VCC | GND |  -  | DATA |
-
-
-## DS18B20 sensor pinout
-
-| VCC   | GND | DATA | 
-|-----|-----|-----| 
-| red | black | yellow |
-| red | black | white |
-
+[![build](https://github.com/SmejkalJakub/twr-radio-ultrasound-lcd-with-encoder/actions/workflows/main.yml/badge.svg)](https://github.com/SmejkalJakub/twr-radio-ultrasound-lcd-with-encoder/actions/workflows/main.yml)
+[![Release](https://img.shields.io/github/release/SmejkalJakub/twr-radio-ultrasound-lcd-with-encoder.svg)](https://github.com/SmejkalJakub/twr-radio-ultrasound-lcd-with-encoder/releases)
+[![License](https://img.shields.io/github/license/SmejkalJakub/twr-radio-ultrasound-lcd-with-encoder.svg)](https://github.com/SmejkalJakub/twr-radio-ultrasound-lcd-with-encoder/blob/master/LICENSE)
 
 ## License
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT/) - see the [LICENSE](LICENSE) file for details.
-
----
-
-Made with &#x2764;&nbsp; by [**HARDWARIO s.r.o.**](https://www.hardwario.com) in Czech Republic.

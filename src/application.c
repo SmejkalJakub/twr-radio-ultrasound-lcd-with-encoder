@@ -1,9 +1,13 @@
 #include <application.h>
 
 #define APPLICATION_TASK_INTERVAL (1 * 60 * 1000)
+#define BATTERY_UPDATE_INTERVAL (15 * 60 * 1000)
+#define ULTRASOUND_UPDATE_INTERVAL (5 * 1000)
 
 twr_led_t led;
 twr_button_t button;
+
+twr_sr04_t sr04;
 
 void button_event_handler(twr_button_t *self, twr_button_event_t event, void *event_param)
 {
@@ -29,6 +33,11 @@ void battery_event_handler(twr_module_battery_event_t event, void *event_param)
     }
 }
 
+void sr04_event_handler(twr_sr04_t *self, twr_sr04_event_t event, void *event_param)
+{
+
+}
+
 void application_init(void)
 {
     twr_log_init(TWR_LOG_LEVEL_DUMP, TWR_LOG_TIMESTAMP_ABS);
@@ -44,6 +53,13 @@ void application_init(void)
     // Initialize battery
     twr_module_battery_init();
     twr_module_battery_set_event_handler(battery_event_handler, NULL);
+    twr_module_battery_set_update_interval(BATTERY_UPDATE_INTERVAL);
+
+    twr_sr04_init(&sr04, TWR_UART_UART2);
+    twr_sr04_set_event_handler(&sr04, sr04_event_handler, NULL);
+    twr_sr04_set_update_interval(&sr04, ULTRASOUND_UPDATE_INTERVAL);
+
+    twr_radio_pairing_request("ultrasound-distance", VERSION);
     
     twr_led_pulse(&led, 2000);
 }

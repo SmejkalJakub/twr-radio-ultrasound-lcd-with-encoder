@@ -18,13 +18,13 @@ twr_tmp112_t tmp112;
 twr_hc_sr04_t sr04;
 
 bool sleep_active = false;
+bool alarm_armed = false;
 
 twr_button_t button_left;
 twr_button_t button_right;
 
 twr_tick_t distance_next_pub;
 twr_tick_t temp_next_pub;
-
 
 float distance = 0;
 float last_published_distance = 0;
@@ -50,9 +50,15 @@ void button_event_handler(twr_button_t *self, twr_button_event_t event, void *ev
 {
     (void) self;
 
+    if(self == &button_left && event == TWR_BUTTON_EVENT_HOLD)
+    {
+        alarm_armed = !alarm_armed;
+        return;
+    }
+
     if (sleep_active)
     {
-        if (self == &button_left && event == TWR_BUTTON_EVENT_HOLD)
+        if (event == TWR_BUTTON_EVENT_HOLD)
         {
             wakeup();
         }
@@ -63,7 +69,7 @@ void button_event_handler(twr_button_t *self, twr_button_event_t event, void *ev
     }
     else
     {
-        if (self == &button_left && event == TWR_BUTTON_EVENT_HOLD)
+        if (self == &button_right && event == TWR_BUTTON_EVENT_HOLD)
         {
             sleep();
         }
@@ -136,12 +142,11 @@ void hc_sr04_event_handler(twr_hc_sr04_t *self, twr_hc_sr04_event_t event, void 
         return;
     }
 
-
     if (twr_hc_sr04_get_distance_millimeter(&sr04, &value))
     {
         distance = value / 10;
 
-        if(distance <= alarm_distance)
+        if((distance <= alarm_distance) && alarm_armed)
         {
             bool alarm = true;
             twr_radio_pub_float("distance/alarm/cm", &distance);
@@ -204,7 +209,7 @@ void application_init(void)
     twr_button_set_hold_time(&button_right, 300);
 
     twr_button_set_debounce_time(&button_left, 30);
-    twr_button_set_debounce_time(&button_left, 30);
+    twr_button_set_debounce_time(&button_right, 30);
 
     twr_module_encoder_init();
     twr_module_encoder_set_event_handler(encoder_event_handler, NULL);
@@ -238,14 +243,38 @@ void application_task(void)
     twr_module_lcd_draw_string(8, 0, "DISTANCE METER", 1);
     twr_module_lcd_draw_string(0, 15, "--------------------------", 1);
 
-    snprintf(buffer, sizeof(buffer), "Alarm: %d cm", alarm_distance);
+    snprintf(buffer, sizeof(buffer), "Distance: %.1f cm", distance);
     twr_module_lcd_draw_string(0, 25, buffer, 1);
 
-    snprintf(buffer, sizeof(buffer), "Distance: %.1f cm", distance);
+    snprintf(buffer, sizeof(buffer), "Alarm: %d cm", alarm_distance);
     twr_module_lcd_draw_string(0, 37, buffer, 1);
 
     snprintf(buffer, sizeof(buffer), "Temp: %.1f °C", temperature);
     twr_module_lcd_draw_string(0, 50, buffer, 1);
+
+
+    if(alarm_armed)
+    {
+        twr_module_lcd_draw_string(38, 70, "ARMED", 1);
+
+        twr_module_lcd_set_font(&twr_font_ubuntu_11);
+        twr_module_lcd_draw_string(3, 98, "HOLD", 1);
+        twr_module_lcd_draw_string(7, 108, "FOR", 1);
+        twr_module_lcd_draw_string(2, 118, "DISARM", 1);
+    }
+    else
+    {
+        twr_module_lcd_draw_string(30, 70, "DISARMED", 1);
+
+        twr_module_lcd_set_font(&twr_font_ubuntu_11);
+        twr_module_lcd_draw_string(3, 98, "HOLD", 1);
+        twr_module_lcd_draw_string(7, 108, "FOR", 1);
+        twr_module_lcd_draw_string(6, 118, "ARM", 1);
+    }
+
+    twr_module_lcd_draw_string(100, 98, "HOLD", 1);
+    twr_module_lcd_draw_string(104, 108, "FOR", 1);
+    twr_module_lcd_draw_string(100, 118, "SLEEP", 1);
 
     twr_module_lcd_update();
 

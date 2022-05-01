@@ -17,6 +17,7 @@
 
 // Core Module LED instance
 twr_led_t led;
+twr_led_t lcdLedRed;
 
 // Core Module temperature sensor instance
 twr_tmp112_t tmp112;
@@ -39,6 +40,7 @@ bool alarm_armed = false;
 float distance = 0;
 float last_published_distance = 0;
 int alarm_distance = 50;
+
 float temperature = 0;
 float last_published_temp = 0;
 
@@ -171,8 +173,6 @@ void encoder_event_handler(twr_module_encoder_event_t event, void *event_param)
         {
             alarm_distance = MAX_DISTANCE;
         }
-
-        twr_log_debug("alarm_distance %d", alarm_distance);
     }
 }
 
@@ -186,11 +186,9 @@ void encoder_event_handler(twr_module_encoder_event_t event, void *event_param)
 void hc_sr04_event_handler(twr_hc_sr04_t *self, twr_hc_sr04_event_t event, void *event_param)
 {
     float value;
-    twr_log_info("Reading distance...");
 
     if (event != TWR_HC_SR04_EVENT_UPDATE)
     {
-        twr_log_info("Problem with distance update");
         return;
     }
 
@@ -202,6 +200,8 @@ void hc_sr04_event_handler(twr_hc_sr04_t *self, twr_hc_sr04_event_t event, void 
         if((distance <= alarm_distance) && alarm_armed)
         {
             bool alarm = true;
+
+            twr_led_blink(&lcdLedRed, 3);
             twr_radio_pub_float("distance/alarm/cm", &distance);
             twr_radio_pub_bool("alarm", &alarm);
         }
@@ -249,6 +249,9 @@ void application_init(void)
     twr_module_lcd_init();
     twr_module_lcd_set_font(&twr_font_ubuntu_13);
     twr_module_lcd_update();
+
+    const twr_led_driver_t* driver = twr_module_lcd_get_led_driver();
+    twr_led_init_virtual(&lcdLedRed, TWR_MODULE_LCD_LED_RED, driver, 1);
 
     // Initialize TMP-112 temperature sensor on Core Module
     twr_tmp112_init(&tmp112, TWR_I2C_I2C0, 0x49);
